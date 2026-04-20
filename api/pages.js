@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Missing WP_SITE_ID env var' });
   }
 
-  const endpoint = `https://public-api.wordpress.com/wp/v2/sites/${siteId}/pages`;
+  const endpoint = `https://public-api.wordpress.com/rest/v1.1/sites/${siteId}/posts/types/page`;
 
   try {
     if (req.method === 'GET') {
