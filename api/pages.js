@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Missing WP_SITE_ID env var' });
   }
 
-  const endpoint = `https://public-api.wordpress.com/rest/v1.1/sites/${siteId}/posts/types/page`;
+  const endpoint = `https://public-api.wordpress.com/rest/v1.1/sites/${siteId}/posts/?type=page&number=100`;
 
   try {
     if (req.method === 'GET') {
@@ -30,43 +30,13 @@ export default async function handler(req, res) {
         data = { raw: text };
       }
 
-      if (!response.ok) {
-        return res.status(response.status).json(data);
-      }
-
-      return res.status(200).json(data);
-    }
-
-    if (req.method === 'POST') {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(req.body)
-      });
-
-      const text = await response.text();
-      let data;
-
-      try {
-        data = text ? JSON.parse(text) : { raw: '' };
-      } catch {
-        data = { raw: text };
-      }
-
-      if (!response.ok) {
-        return res.status(response.status).json(data);
-      }
-
-      return res.status(200).json(data);
+      return res.status(response.status).json(data);
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error) {
     return res.status(500).json({
-      error: 'Failed to process pages request',
+      error: 'Failed to fetch pages',
       details: error.message
     });
   }
