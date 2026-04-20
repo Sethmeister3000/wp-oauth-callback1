@@ -15,12 +15,20 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       const response = await fetch(endpoint, {
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      let data;
+
+      try {
+        data = text ? JSON.parse(text) : { raw: '' };
+      } catch {
+        data = { raw: text };
+      }
 
       if (!response.ok) {
         return res.status(response.status).json(data);
@@ -39,7 +47,14 @@ export default async function handler(req, res) {
         body: JSON.stringify(req.body)
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      let data;
+
+      try {
+        data = text ? JSON.parse(text) : { raw: '' };
+      } catch {
+        data = { raw: text };
+      }
 
       if (!response.ok) {
         return res.status(response.status).json(data);
